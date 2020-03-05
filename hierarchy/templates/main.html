@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+
+    <body>
+        {% for file in files %}<a href="/add_form/{{file.id}}">{% endfor %} Add a File or Folder</a>
+        <a href="/create_form/">Create a Tree</a>
+        <a href="/logout/">Logout</a>
+        {% load mptt_tags %}
+        <ul>
+            {% recursetree files %}
+            <li>
+                {{ node.name }}
+                {% if not node.is_leaf_node %}
+                <ul class="children">
+                    {{ children }}
+                </ul>
+                {% endif %}
+            </li>
+            {% endrecursetree %}
+        </ul>
+
+
+    </body>
+
+</html>
