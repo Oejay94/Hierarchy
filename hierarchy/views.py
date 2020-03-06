@@ -1,11 +1,12 @@
-from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse
+from django.shortcuts import render, HttpResponseRedirect, reverse
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
+from django.views import View
 
 from customuser.models import CustomUser
 
 from .models import File_or_Folder
-from .forms import add_form, login_form, signup_form, create_form
+from .forms import add_form, LoginForm, signup_form, create_form
 
 @login_required()
 def file_folder_view(request):
@@ -53,11 +54,36 @@ def create_view(request):
     return render(request, html, {'form': form})
 
 
-def login_view(request):
-    html = 'login.html'
+# def login_view(request):
+#     html = 'login.html'
 
-    if request.method == 'POST':
-        form = login_form(request.POST)
+#     if request.method == 'POST':
+#         form = login_form(request.POST)
+
+#         if form.is_valid():
+#             data = form.cleaned_data
+#             user = authenticate(
+#                 username=data['username'],
+#                 password=data['password']
+#             )
+#             if user is not None:
+#                 login(request, user)
+#                 return HttpResponse(reverse('main'))
+#     else:
+#         form = login_form()
+
+#     return render(request, html, {'form': form})
+
+
+class LoginView(View):
+
+    def get(self, request):
+        html = 'login.html'
+        form = LoginForm()
+        return render(request, html, {'form': form})
+
+    def post(self, request):
+        form = LoginForm(request.POST)
 
         if form.is_valid():
             data = form.cleaned_data
@@ -67,11 +93,8 @@ def login_view(request):
             )
             if user is not None:
                 login(request, user)
-                return HttpResponse(reverse('main'))
-    else:
-        form = login_form()
+                return HttpResponseRedirect(reverse('main'))
 
-    return render(request, html, {'form': form})
 
 
 def logout_view(request):
@@ -79,10 +102,35 @@ def logout_view(request):
     return HttpResponseRedirect(request.GET.get('next', '/login/'))
 
 
-def signup_view(request):
-    html = 'generic_form.html'
+# def signup_view(request):
+#     html = 'generic_form.html'
 
-    if request.method == 'POST':
+#     if request.method == 'POST':
+#         form = signup_form(request.POST)
+
+#         if form.is_valid():
+#             data = form.cleaned_data
+#             user = CustomUser.objects.create(
+#                 username=data['username'],
+#                 first_name=data['first_name'],
+#                 password=data['password1']
+#             )
+#             login(request, user)
+#         return HttpResponseRedirect(reverse('main'))
+#     else:
+#         form = signup_form()
+
+#     return render(request, html, {'form': form})
+
+
+class CreateAccount(View):
+
+    def get(self, request):
+        html = 'CreateAccount.html'
+        form = signup_form()
+        return render(request, html, {'form': form})
+
+    def post(self, request):
         form = signup_form(request.POST)
 
         if form.is_valid():
@@ -93,9 +141,4 @@ def signup_view(request):
                 password=data['password1']
             )
             login(request, user)
-        return HttpResponseRedirect(reverse('main'))
-    else:
-        form = signup_form()
-
-    return render(request, html, {'form': form})
-
+            return HttpResponseRedirect(reverse('main'))

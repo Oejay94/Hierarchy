@@ -23,7 +23,7 @@ urlpatterns = [
     path('', views.file_folder_view, name='main'),
     path('create_form/', views.create_view, name='create_form'),
     path('add_form/<int:id>/', views.add_view, name='add_form'),
-    path('create_account/', views.signup_view, name='signup'),
-    path('login/', views.login_view, name='login'),
+    path('create_account/', views.CreateAccount.as_view(), name='signup'),
+    path('login/', views.LoginView.as_view(), name='login'),
     path('logout/', views.logout_view, name='logout')
 ]
